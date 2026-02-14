@@ -4,17 +4,29 @@
 
 > GeekPie × Pi Day 2026 · ShanghaiTech University
 
-观众扫码提交自然语言 Prompt，AI 自动将其转化为 [Strudel](https://strudel.cc) 音乐代码并注入引擎，大屏实时展示代码 + 可视化。完全没有真人 DJ——音乐由观众和 AI 共同驱动。
+Vibe Cod'in Pie 是一个让观众通过自然语言直接干预音乐进行的实时电子乐系统。观众只需扫码提出需求（如“让节奏快一点”、“加一点赛博朋克感的贝斯”），AI 就会在几秒钟内将需求转化为 [Strudel](https://strudel.cc) 代码，并实时注入大屏运行引擎。
 
-## 🏗️ 架构
+## ✨ 核心特性
+
+- **🤖 DeepSeek 驱动**：使用 DeepSeek-V3/Chat 模型，针对 Strudel (TidalCycles JS) 语法深度优化 Prompt 工程。
+- **🔄 强一致性同步 (Pull Sync)**：服务器采用“按需拉取”模型。在每次 AI 生成前，实时向浏览器索要最新的代码状态，彻底杜绝“AI 基于旧代码修改”的问题。
+- **📱 Material 3 移动端**：基于 Google Material Design v3 标准设计的观众端界面，支持动态状态通知（排队中、处理中、已应用）。
+- **🛡️ 生产级稳定性**：
+  - **AST 验证**：生成的代码经过 Acorn 解析校验，确保语法合法且不包含非法系统调用。
+  - **自动重试**：AI 生成失败时自动原地重试。
+  - **内容审核**：内置关键词过滤，预防不当内容提交。
+- **🎹 预设切换**：支持即时切换多种音乐风格（Ambient, Techno, Glitch-Hop 等）。
+
+## 🏗️ 系统架构
 
 ```
-观众手机 ──WebSocket──→ Node.js 后端 ──WebSocket──→ 大屏浏览器
-(提交 Prompt)           │                           (Strudel + Hydra)
-                        ├─ 内容审核
-                        ├─ Prompt 队列
-                        ├─ GitHub Models API
-                        └─ AST 代码验证
+观众手机 (Mobile) ──WebSocket──→ Node.js 后端 ──WebSocket──→ 大屏浏览器 (Screen)
+(Material 3 UI)        │        (Sync & AI Pipeline)         (Strudel Engine)
+                       ├─> 1. 加入任务队列
+                       ├─> 2. 向 Screen 拉取当前代码
+                       ├─> 3. 调用 DeepSeek API
+                       ├─> 4. AST 语法校验
+                       └─> 5. 推送新代码并执行
 ```
 
 ## 🚀 快速开始
@@ -25,89 +37,52 @@
 npm install
 ```
 
-### 2. 配置环境变量
+### 2. 环境配置
 
-```bash
-cp .env.example .env
-# 编辑 .env，填入你的 GitHub PAT（需要 models scope）
+创建 `.env` 文件并配置你的 DeepSeek API Key：
+
+```ini
+PORT=3000
+HOST=0.0.0.0
+DEEPSEEK_API_KEY=your_sk_key_here
+AI_MODEL=deepseek-chat
 ```
 
-获取 GitHub PAT：https://github.com/settings/tokens → 勾选 `models` 权限
-
-### 3. 启动开发模式
+### 3. 启动项目
 
 ```bash
+# 开发环境（带热更新）
 npm run dev
-```
 
-这会同时启动：
-- 🖥️ **大屏页面**：http://localhost:5173（Vite dev server）
-- 📱 **手机提交页**：http://localhost:3000/submit
-- 🔌 **WebSocket**：ws://localhost:3000/ws
-- 📊 **API**：http://localhost:3000/api/state
-
-### 4. 生产部署
-
-```bash
-npm run build
+# 生产环境
 npm start
 ```
 
-所有页面都通过 http://YOUR_IP:3000 访问。
+## 🖥️ 现场部署建议
 
-## 📱 现场部署
+### 1. 访问路径
+- **大屏显示端**：`http://[IP]:3000/` (展示代码、频谱及 QR 码)
+- **观众互动端**：`http://[IP]:3000/mobile/` (扫码即跳转)
 
-### 网络配置（双网隔离）
-- **内网**：路由器开 WiFi 热点，供观众手机 + 后端通信
-- **外网**：有线/另一 WiFi 连接互联网（GitHub API）
+### 2. 网络设置
+- **同一局域网**：确保后端服务器、大屏浏览器和观众手机在同一子网下。
+- **推荐拓扑**：服务器连接有线网以保证 DeepSeek API 访问速度；手机端通过高性能 WiFi 热点连接。
 
-### 大屏
-1. Chrome 全屏打开 http://localhost:3000/
-2. 点击"🎵 点击开始"按钮（激活 Web Audio）
-3. 音频输出：电脑 → USB 声卡 → 调音台 → PA 音箱
-
-### 观众互动
-- QR 码自动显示在大屏右上角
-- 指向 http://YOUR_LOCAL_IP:3000/submit
-
-## 🔧 API
-
-| 端点 | 方法 | 说明 |
-|------|------|------|
-| `/api/state` | GET | 获取当前状态 |
-| `/api/pattern/:index` | POST | 紧急切换预设 Pattern |
+### 3. 音频设置
+- 打开大屏页面后需要点击一次页面（或点击 "PLAY" 按钮）以激活浏览器的 Web Audio 上下文。
 
 ## 📁 项目结构
 
-```
-├── server/
-│   ├── index.js        # 主服务器
-│   ├── ai.js           # GitHub Models API 调用
-│   ├── prompts.js      # System Prompt / Prompt 工程
-│   ├── validator.js    # AST 代码安全验证
-│   ├── queue.js        # Prompt 队列管理
-│   ├── moderator.js    # 内容审核
-│   └── patterns.js     # 预设 Pattern（11 个风格）
-├── client/
-│   ├── index.html      # 大屏入口
-│   ├── src/
-│   │   ├── main.js     # 大屏逻辑
-│   │   └── style.css   # 大屏样式
-│   └── mobile/
-│       └── index.html  # 手机端页面（独立，无构建）
-├── .env.example
-├── vite.config.js
-└── package.json
-```
+- `server/`: 核心逻辑
+  - `index.js`: WebSocket 管理、代码同步协议、任务调度。
+  - `ai.js`: DeepSeek API 接口及重试逻辑。
+  - `prompts.js`: 针对音乐生成的系统提示词。
+  - `validator.js`: 基于 AST 的 Strudel 安全验证器。
+  - `queue.js`: 异步高效任务队列。
+- `client/`: 前端资源
+  - `screen.html`: 大屏视觉中心（Strudel 引擎 + 频谱可视化）。
+  - `mobile/index.html`: Material 3 规范 a 观众端。
 
-## 🛡️ 安全机制
+## 📄 开源许可
 
-- **Prompt 审核**：关键词黑名单过滤
-- **代码沙箱**：acorn AST 解析 + 函数白名单
-- **崩溃恢复**：eval 在 try-catch 中，失败保持当前音乐
-- **速率限制**：每设备每 30 秒最多提交 1 次
-- **队列上限**：最多 20 条排队
-
-## 📄 License
-
-MIT © GeekPie @ ShanghaiTech
+MIT License. Designed with ❤️ for GeekPie.
