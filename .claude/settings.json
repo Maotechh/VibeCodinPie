@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "Read(//Users/henryli/Personal/**)",
+      "WebFetch(domain:unpkg.com)",
+      "WebFetch(domain:strudel.cc)",
+      "Bash(curl:*)",
+      "Bash(python3 -c \"\nimport re\ncode = open\\(''/tmp/strudel_web.js''\\).read\\(\\)\n# Find all occurrences of sliderWithID with surrounding context\nmatches = [\\(m.start\\(\\), code[max\\(0,m.start\\(\\)-300\\):m.start\\(\\)+500]\\) for m in re.finditer\\(r''sliderWithID'', code\\)]\nfor i, \\(pos, ctx\\) in enumerate\\(matches\\):\n    print\\(f''=== Match {i+1} at pos {pos} ===''\\)\n    print\\(ctx\\)\n    print\\(\\)\n\")",
+      "Bash(python3:*)",
+      "Bash(git stash:*)",
+      "WebFetch(domain:eggg.uk)",
+      "WebFetch(domain:hackaday.com)",
+      "WebFetch(domain:club.tidalcycles.org)",
+      "Bash(node -e:*)",
+      "Bash(node /tmp/slider_test.mjs)",
+      "Bash(node slider_e2e_test.mjs)",
+      "Bash(node server/index.js)"
+    ],
+    "additionalDirectories": [
+      "/tmp"
+    ]
+  }
+}

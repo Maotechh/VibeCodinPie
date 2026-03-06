@@ -13,7 +13,11 @@ const STRUDEL_GLOBALS = new Set([
   'fastcat', 'slowcat', 'timeCat', 'randcat', 'ur',
   'mini', 'pure', 'silence', 'rest',
   // Control
-  'setcps', 'setCps', 'hush',
+  'setcps', 'setCps', 'setcpm', 'setCpm', 'hush',
+  // Registration
+  'register',
+  // Interactive
+  'slider', 'sliderWithID',
   // Math / modulators
   'sine', 'cosine', 'saw', 'square', 'tri', 'rand', 'irand',
   'run', 'perlin',
