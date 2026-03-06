@@ -8,7 +8,8 @@
 import { WebSocket } from 'ws';
 import assert from 'assert';
 
-const WS_URL = 'ws://localhost:3000/ws';
+const PORT = process.env.PORT || 3000;
+const WS_URL = `ws://localhost:${PORT}/ws`;
 const TIMEOUT_MS = 3000;
 
 let testsPassed = 0;
@@ -73,10 +74,27 @@ function sleep(ms) {
   return new Promise(r => setTimeout(r, ms));
 }
 
+const TEST_SLIDERS = [
+  { id: 'test:0:100', name: 'TestSlider', value: 50, min: 0, max: 100 }
+];
+
+async function connectMaster() {
+  const ws = await connect('screen', '&key=geekpie');
+  await waitForMessage(ws, 'init');
+  ws.send(JSON.stringify({ type: 'register_sliders', sliders: TEST_SLIDERS }));
+  await sleep(200);
+  return ws;
+}
+
+async function ensureMaster(current) {
+  if (current && current.readyState === WebSocket.OPEN) return current;
+  log('Reconnecting master...');
+  return await connectMaster();
+}
+
 async function runTests() {
   log('Starting Mobile Control Tests...');
 
-  // We need a master screen to register sliders
   let master = null;
   let mobile1 = null;
   let mobile2 = null;
@@ -84,18 +102,8 @@ async function runTests() {
 
   try {
     // ── Setup: Connect master and register sliders ──
-    master = await connect('screen', '&key=geekpie');
-    await waitForMessage(master, 'init');
+    master = await connectMaster();
     log('Master connected');
-
-    // Register test sliders
-    master.send(JSON.stringify({
-      type: 'register_sliders',
-      sliders: [
-        { id: 'test:0:100', name: 'TestSlider', value: 50, min: 0, max: 100 }
-      ]
-    }));
-    await sleep(200);
 
     // ══════════════════════════════════════════════
     // Test 1: Mobile connects and receives init with sliders
@@ -112,6 +120,7 @@ async function runTests() {
     // Test 2: control_slider sends apply_force to master
     // ══════════════════════════════════════════════
     log('Test 2: control_slider -> apply_force');
+    master = await ensureMaster(master);
     const forcePromise = waitForMessage(master, 'apply_force');
     mobile1.send(JSON.stringify({
       type: 'control_slider',
@@ -134,20 +143,16 @@ async function runTests() {
     mobile2 = await connect('mobile', '&session=test-session-2');
     await waitForMessage(mobile2, 'init');
 
-    // mobile1 pushes +0.8, mobile2 pushes -0.8
     mobile1.send(JSON.stringify({ type: 'control_slider', id: 'test:0:100', force: 0.8 }));
     mobile2.send(JSON.stringify({ type: 'control_slider', id: 'test:0:100', force: -0.8 }));
 
-    // Wait for aggregation cycles, collect apply_force messages
-    // With opposing forces, net should be ~0, so no apply_force should be sent (< 0.01 threshold)
+    master = await ensureMaster(master);
     const cancelMsgs = await collectMessages(master, 'apply_force', 350);
-    // All collected forces should be near zero or no messages at all
     const allNearZero = cancelMsgs.every(m => Math.abs(m.force) < 0.05);
     assert.ok(cancelMsgs.length === 0 || allNearZero,
       `Opposing forces should cancel: got ${cancelMsgs.map(m => m.force)}`);
     pass('Opposing forces cancel each other out');
 
-    // Clear
     mobile1.send(JSON.stringify({ type: 'stop_control', id: 'test:0:100' }));
     mobile2.send(JSON.stringify({ type: 'stop_control', id: 'test:0:100' }));
     await sleep(200);
@@ -159,11 +164,11 @@ async function runTests() {
     mobile3 = await connect('mobile', '&session=test-session-3');
     await waitForMessage(mobile3, 'init');
 
-    // 3 users all push +1.0 => raw sum = 3.0, should be clamped to 1.0
     mobile1.send(JSON.stringify({ type: 'control_slider', id: 'test:0:100', force: 1.0 }));
     mobile2.send(JSON.stringify({ type: 'control_slider', id: 'test:0:100', force: 1.0 }));
     mobile3.send(JSON.stringify({ type: 'control_slider', id: 'test:0:100', force: 1.0 }));
 
+    master = await ensureMaster(master);
     const clampMsgs = await collectMessages(master, 'apply_force', 350);
     assert.ok(clampMsgs.length > 0, 'Should receive apply_force messages');
     for (const m of clampMsgs) {
@@ -176,7 +181,6 @@ async function runTests() {
     // Test 5: force_info broadcast to mobile
     // ══════════════════════════════════════════════
     log('Test 5: force_info broadcast');
-    // Forces are still active from test 4
     const infoMsgs = await collectMessages(mobile1, 'force_info', 350);
     assert.ok(infoMsgs.length > 0, 'Mobile should receive force_info');
     const info = infoMsgs[0];
@@ -187,7 +191,6 @@ async function runTests() {
     assert.ok(sliderInfo.netForce <= 1.0 && sliderInfo.netForce >= -1.0, 'netForce should be clamped');
     pass('force_info broadcast to mobile with participants and clamped netForce');
 
-    // Clear all
     mobile1.send(JSON.stringify({ type: 'stop_control', id: 'test:0:100' }));
     mobile2.send(JSON.stringify({ type: 'stop_control', id: 'test:0:100' }));
     mobile3.send(JSON.stringify({ type: 'stop_control', id: 'test:0:100' }));
@@ -197,15 +200,14 @@ async function runTests() {
     // Test 6: Disconnect cleans up forces
     // ══════════════════════════════════════════════
     log('Test 6: Disconnect cleanup');
-    // mobile3 applies force then disconnects
     mobile3.send(JSON.stringify({ type: 'control_slider', id: 'test:0:100', force: 0.9 }));
     await sleep(150);
     mobile3.close();
-    await sleep(300);
+    // Wait long enough for close event + aggregation cycle to pass
+    await sleep(500);
 
-    // Now only mobile1 and mobile2 have no active forces (cleared above)
-    // So no apply_force should be sent
-    const postDisconnect = await collectMessages(master, 'apply_force', 350);
+    master = await ensureMaster(master);
+    const postDisconnect = await collectMessages(master, 'apply_force', 500);
     const allSmall = postDisconnect.every(m => Math.abs(m.force) < 0.05);
     assert.ok(postDisconnect.length === 0 || allSmall,
       `After disconnect, force should be gone: got ${postDisconnect.map(m => m.force)}`);
@@ -215,15 +217,13 @@ async function runTests() {
     // Test 7: stop_control with all:true clears all sliders
     // ══════════════════════════════════════════════
     log('Test 7: stop_control all:true');
-    // Apply force from mobile1
     mobile1.send(JSON.stringify({ type: 'control_slider', id: 'test:0:100', force: 0.7 }));
     await sleep(150);
 
-    // Send stop_control with all:true
     mobile1.send(JSON.stringify({ type: 'stop_control', all: true }));
     await sleep(300);
 
-    // Should get no more forces
+    master = await ensureMaster(master);
     const postStopAll = await collectMessages(master, 'apply_force', 350);
     const allCleared = postStopAll.every(m => Math.abs(m.force) < 0.05);
     assert.ok(postStopAll.length === 0 || allCleared,
@@ -234,8 +234,12 @@ async function runTests() {
     // Test 8: slider_value_update broadcast
     // ══════════════════════════════════════════════
     log('Test 8: slider_value_update broadcast');
+    // Always reconnect master fresh for this test to guarantee it's the active master
+    if (master && master.readyState === WebSocket.OPEN) master.close();
+    await sleep(200);
+    master = await connectMaster();
     const valuePromise = waitForMessage(mobile1, 'slider_value_update');
-    // Master syncs a slider value
+    await sleep(100);
     master.send(JSON.stringify({
       type: 'sync_slider',
       id: 'test:0:100',

@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#141218" />
   <title>🥧 Vibe Cod'in Pie — 参与互动</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -10,136 +10,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Text:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet" />
   <style>
-    /* ── M3 Tabs ─────────────────────── */
-    .md-tabs {
-      display: flex; background: rgba(20, 18, 24, 0.85);
-      border-bottom: 1px solid var(--md-sys-color-outline-variant);
-      position: sticky; top: 0; z-index: 20;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding-top: env(safe-area-inset-top);
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-    }
-    .md-tab {
-      flex: 1; height: 48px;
-      background: transparent; border: none;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      font-family: var(--md-sys-typescale-title-font);
-      font-size: 14px; font-weight: 500;
-      color: var(--md-sys-color-on-surface-variant);
-      position: relative; cursor: pointer;
-      touch-action: manipulation;
-    }
-    .md-tab.active {
-      color: var(--md-sys-color-primary);
-    }
-    .md-tab-indicator {
-      position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
-      background: var(--md-sys-color-primary);
-      border-radius: 3px 3px 0 0;
-      transform: scaleX(0); transition: transform 0.2s;
-    }
-    .md-tab.active .md-tab-indicator {
-      transform: scaleX(1); /* simplified, usually needs width calc */
-      width: 50%; left: 25%;
-    }
-    .md-tab-icon { font-size: 20px; margin-bottom: 2px; }
-
-    /* ── Slider Control UI ───────────── */
-    #slider-section {
-      display: none; /* Hidden by default */
-      flex-direction: column; gap: 24px;
-      align-items: center; justify-content: center;
-      padding: 32px 16px;
-      text-align: center;
-      min-height: 300px;
-    }
-    .slider-card-container {
-      width: 100%; overflow-x: auto;
-      display: flex; scroll-snap-type: x mandatory;
-      gap: 16px; padding-bottom: 20px;
-      -webkit-overflow-scrolling: touch;
-    }
-    .slider-card {
-      flex: 0 0 100%; scroll-snap-align: center;
-      background: var(--md-sys-color-surface-container);
-      border-radius: var(--md-sys-shape-corner-large);
-      padding: 24px;
-      display: flex; flex-direction: column; align-items: center; gap: 16px;
-      box-shadow: var(--md-sys-elevation-1);
-      transition: transform 0.2s;
-    }
-    .slider-card.active-control {
-      border: 2px solid var(--md-sys-color-primary);
-      box-shadow: var(--md-sys-elevation-2);
-    }
-    .slider-name {
-      font-family: var(--md-sys-typescale-title-font);
-      font-size: 18px; color: var(--md-sys-color-on-surface);
-    }
-    .slider-value-display {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 24px; color: var(--md-sys-color-primary);
-    }
-    
-    /* Force Visualizer */
-    .force-visualizer {
-      width: 100%; height: 12px;
-      background: var(--md-sys-color-surface-container-highest);
-      border-radius: 6px; position: relative; overflow: hidden;
-      margin: 16px 0;
-    }
-    .force-bar {
-      position: absolute; top: 0; bottom: 0;
-      background: var(--md-sys-color-primary);
-      transition: width 0.1s linear, left 0.1s linear;
-      opacity: 0.8;
-    }
-    .force-center-mark {
-      position: absolute; left: 50%; top: 0; bottom: 0; width: 2px;
-      background: var(--md-sys-color-outline); transform: translateX(-50%);
-    }
-    
-    .control-hint {
-      font-size: 12px; color: var(--md-sys-color-on-surface-variant);
-      display: flex; align-items: center; gap: 6px;
-    }
-    .gyro-icon {
-      font-size: 48px; color: var(--md-sys-color-secondary);
-      animation: tilt-anim 2s infinite ease-in-out;
-    }
-    @keyframes tilt-anim {
-      0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(-15deg); }
-      75% { transform: rotate(15deg); }
-    }
-    
-    .no-sliders-msg {
-      color: var(--md-sys-color-outline);
-      font-style: italic; padding: 40px;
-    }
-
-    /* Fallback Touch Area */
-    .touch-control-area {
-      width: 100%; height: 120px;
-      background: var(--md-sys-color-surface-container-high);
-      border-radius: var(--md-sys-shape-corner-medium);
-      display: flex; align-items: center; justify-content: center;
-      touch-action: none; position: relative;
-    }
-    .touch-control-thumb {
-      width: 48px; height: 48px;
-      background: var(--md-sys-color-primary);
-      border-radius: 50%; position: absolute;
-      box-shadow: var(--md-sys-elevation-2);
-    }
-    
-    /* Permission Button */
-    #gyro-perm-btn {
-      margin-top: 16px;
-    }
+    /* ═══════════════════════════════════════════════
+       Material 3 — Dark Theme Design Tokens
+       Matching screen.html's token set exactly
+       ═══════════════════════════════════════════════ */
     :root {
       --md-sys-color-primary:             #D0BCFF;
       --md-sys-color-on-primary:          #381E72;
@@ -203,11 +77,7 @@
       color: var(--md-sys-color-on-surface);
       font-family: var(--md-sys-typescale-body-font);
       -webkit-font-smoothing: antialiased;
-      -webkit-text-size-adjust: 100%;
       overflow-x: hidden;
-    }
-    body {
-      display: flex; flex-direction: column;
     }
 
     .material-symbols-rounded {
@@ -219,20 +89,14 @@
       direction: ltr; font-feature-settings: 'liga';
       -webkit-font-smoothing: antialiased;
     }
-    button, .md-tab, .md-assist-chip {
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-    }
 
     /* ── Top App Bar (M3 Center-aligned Small) ─── */
     .top-app-bar {
       display: flex; align-items: center; justify-content: center;
       flex-direction: column;
       padding: 20px 16px 12px;
-      padding-top: calc(20px + env(safe-area-inset-top));
       background: var(--md-sys-color-surface);
-      /* Make it relative so it scrolls away, letting tabs stick to top */
-      position: relative; z-index: 10;
+      position: sticky; top: 0; z-index: 10;
     }
     .top-app-bar-title {
       font-family: var(--md-sys-typescale-title-font);
@@ -254,7 +118,6 @@
     .main {
       flex: 1; display: flex; flex-direction: column;
       padding: 16px 20px 24px; gap: 20px;
-      padding-bottom: calc(24px + env(safe-area-inset-bottom));
     }
 
     /* ── Input Section ───────────────── */
@@ -350,7 +213,6 @@
     }
     .md-snackbar.show {
       transform: translateY(0); opacity: 1;
-      pointer-events: auto;
     }
     .md-snackbar.error {
       background: var(--md-sys-color-error-container);
@@ -371,7 +233,7 @@
       display: flex; flex-wrap: wrap; gap: 8px;
     }
     .md-assist-chip {
-      height: auto; min-height: 44px; padding: 6px 16px;
+      height: 32px; padding: 0 16px;
       border: 1px solid var(--md-sys-color-outline);
       border-radius: var(--md-sys-shape-corner-small);
       background: transparent;
@@ -413,7 +275,6 @@
     /* ── Footer ──────────────────────── */
     .footer {
       text-align: center; padding: 16px;
-      padding-bottom: calc(16px + env(safe-area-inset-bottom));
       font-family: var(--md-sys-typescale-body-font);
       font-size: 12px;
       color: var(--md-sys-color-outline);
@@ -428,99 +289,161 @@
       animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Slider Control UI ───────────── */
+    #slider-section {
+      display: none;
+      flex-direction: column; gap: 16px;
+      align-items: center;
+      padding: 8px 0;
+    }
+    #slider-section.has-sliders {
+      display: flex;
+    }
+    .section-divider {
+      width: 100%;
+      font-family: var(--md-sys-typescale-label-font);
+      font-size: 12px; font-weight: 500;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      color: var(--md-sys-color-on-surface-variant);
+      padding: 8px 0 4px;
+      border-top: 1px solid var(--md-sys-color-outline-variant);
+    }
+    .slider-card-container {
+      width: 100%; overflow-x: auto;
+      display: flex; scroll-snap-type: x mandatory;
+      gap: 16px; padding-bottom: 12px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .slider-card {
+      flex: 0 0 100%; scroll-snap-align: center;
+      background: var(--md-sys-color-surface-container);
+      border-radius: var(--md-sys-shape-corner-large);
+      padding: 24px;
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+      box-shadow: var(--md-sys-elevation-1);
+    }
+    .slider-card.active-control {
+      border: 2px solid var(--md-sys-color-primary);
+      box-shadow: var(--md-sys-elevation-2);
+    }
+    .slider-name {
+      font-family: var(--md-sys-typescale-title-font);
+      font-size: 18px; color: var(--md-sys-color-on-surface);
+    }
+    .slider-value-display {
+      font-family: monospace;
+      font-size: 24px; color: var(--md-sys-color-primary);
+    }
+    .force-visualizer {
+      width: 100%; height: 8px; position: relative;
+      background: var(--md-sys-color-surface-variant);
+      border-radius: 4px; overflow: hidden;
+    }
+    .force-center-mark {
+      position: absolute; left: 50%; top: 0; bottom: 0; width: 2px;
+      background: var(--md-sys-color-outline); transform: translateX(-50%);
+    }
+    .force-bar {
+      position: absolute; top: 0; bottom: 0;
+      background: var(--md-sys-color-primary);
+      border-radius: 4px;
+      transition: width 0.1s, left 0.1s;
+    }
+    .touch-control-area {
+      width: 100%; height: 80px;
+      border: 2px dashed var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-medium);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 14px;
+      cursor: grab; user-select: none;
+    }
+    .control-hint {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--md-sys-typescale-body-font);
+      font-size: 12px; color: var(--md-sys-color-on-surface-variant);
+    }
+    .no-sliders-msg {
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 14px; text-align: center; padding: 24px 0;
+    }
   </style>
 </head>
 <body>
+  <!-- Top App Bar -->
   <header class="top-app-bar">
     <div>
       <div class="top-app-bar-title">
         <span class="material-symbols-rounded">music_note</span>
         Vibe Cod'in Pie
       </div>
+      <div class="top-app-bar-subtitle">GeekPie Pi Day 2026 · 用文字改变音乐</div>
     </div>
   </header>
 
-  <!-- M3 Tabs -->
-  <div class="md-tabs">
-    <button class="md-tab active" data-tab="prompt">
-      <span class="material-symbols-rounded md-tab-icon">edit_note</span>
-      创作
-      <span class="md-tab-indicator"></span>
-    </button>
-    <button class="md-tab" data-tab="control">
-      <span class="material-symbols-rounded md-tab-icon">tune</span>
-      控制
-      <span class="md-tab-indicator"></span>
-    </button>
-  </div>
-
   <main class="main">
-    <!-- Prompt Section -->
-    <div id="prompt-section">
-      <!-- Input Section -->
-      <section class="input-section">
-        <div class="input-supporting-text">
-          告诉 AI 你想要什么样的音乐
-          <span class="material-symbols-rounded">auto_awesome</span>
+    <!-- Input Section -->
+    <section class="input-section">
+      <div class="input-supporting-text">
+        告诉 AI 你想要什么样的音乐
+        <span class="material-symbols-rounded">auto_awesome</span>
+      </div>
+      <div class="md-text-field">
+        <textarea
+          id="prompt-input"
+          placeholder="例如：加一些 lo-fi 鼓点、让贝斯更深沉…"
+          maxlength="200"
+        ></textarea>
+        <div class="supporting-text">
+          <span></span>
+          <span><span id="char-count">0</span>/200</span>
         </div>
-        <div class="md-text-field">
-          <textarea
-            id="prompt-input"
-            placeholder="例如：加一些 lo-fi 鼓点、让贝斯更深沉…"
-            maxlength="200"
-          ></textarea>
-          <div class="supporting-text">
-            <span></span>
-            <span><span id="char-count">0</span>/200</span>
-          </div>
-        </div>
-        <button class="md-filled-btn" id="submit-btn">
-          <span class="material-symbols-rounded">send</span>
-          提交
-        </button>
-      </section>
+      </div>
+      <button class="md-filled-btn" id="submit-btn">
+        <span class="material-symbols-rounded">send</span>
+        提交
+      </button>
+    </section>
 
-      <!-- Suggestion Chips -->
-      <section class="chips-section">
-        <div class="chips-section-title">试试这些</div>
-        <div class="chips-row">
-          <button class="md-assist-chip" data-prompt="加一些 808 鼓点">
-            <span class="material-symbols-rounded">drum</span> 808 鼓
-          </button>
-          <button class="md-assist-chip" data-prompt="让音乐更有律动感">
-            <span class="material-symbols-rounded">trending_up</span> 更有律动
-          </button>
-          <button class="md-assist-chip" data-prompt="换成爵士风格的和弦">
-            <span class="material-symbols-rounded">piano</span> 爵士和弦
-          </button>
-          <button class="md-assist-chip" data-prompt="加一些延迟效果">
-            <span class="material-symbols-rounded">blur_on</span> 延迟效果
-          </button>
-          <button class="md-assist-chip" data-prompt="让节奏快一点">
-            <span class="material-symbols-rounded">speed</span> 加速节奏
-          </button>
-          <button class="md-assist-chip" data-prompt="来点 lo-fi 感觉">
-            <span class="material-symbols-rounded">nightlight</span> Lo-fi
-          </button>
-          <button class="md-assist-chip" data-prompt="加一个电子琶音">
-            <span class="material-symbols-rounded">electric_bolt</span> 电子琶音
-          </button>
-          <button class="md-assist-chip" data-prompt="把贝斯换成方波">
-            <span class="material-symbols-rounded">graphic_eq</span> 方波贝斯
-          </button>
-        </div>
-      </section>
-    </div>
+    <!-- Suggestion Chips -->
+    <section class="chips-section">
+      <div class="chips-section-title">试试这些</div>
+      <div class="chips-row">
+        <button class="md-assist-chip" data-prompt="加一些 808 鼓点">
+          <span class="material-symbols-rounded">drum</span> 808 鼓
+        </button>
+        <button class="md-assist-chip" data-prompt="让音乐更有律动感">
+          <span class="material-symbols-rounded">trending_up</span> 更有律动
+        </button>
+        <button class="md-assist-chip" data-prompt="换成爵士风格的和弦">
+          <span class="material-symbols-rounded">piano</span> 爵士和弦
+        </button>
+        <button class="md-assist-chip" data-prompt="加一些延迟效果">
+          <span class="material-symbols-rounded">blur_on</span> 延迟效果
+        </button>
+        <button class="md-assist-chip" data-prompt="让节奏快一点">
+          <span class="material-symbols-rounded">speed</span> 加速节奏
+        </button>
+        <button class="md-assist-chip" data-prompt="来点 lo-fi 感觉">
+          <span class="material-symbols-rounded">nightlight</span> Lo-fi
+        </button>
+        <button class="md-assist-chip" data-prompt="加一个电子琶音">
+          <span class="material-symbols-rounded">electric_bolt</span> 电子琶音
+        </button>
+        <button class="md-assist-chip" data-prompt="把贝斯换成方波">
+          <span class="material-symbols-rounded">graphic_eq</span> 方波贝斯
+        </button>
+      </div>
+    </section>
 
     <!-- Slider Control Section -->
     <div id="slider-section">
-      <div id="slider-cards" class="slider-card-container">
-        <!-- Sliders injected here -->
-      </div>
+      <div class="section-divider">🎚️ 实时控制</div>
+      <div id="slider-cards" class="slider-card-container"></div>
       <div id="no-sliders" class="no-sliders-msg">
         当前没有可控制的滑块<br>请等待 Master 创建
       </div>
-      
       <button id="gyro-perm-btn" class="md-filled-btn" style="display:none; width:auto; padding:0 32px;">
         <span class="material-symbols-rounded">screen_rotation</span>
         启用体感控制
@@ -552,25 +475,29 @@
     const queueNum = document.getElementById('queue-num');
     const wsDot = document.getElementById('ws-dot');
     const chips = document.querySelectorAll('.md-assist-chip');
-    
-    // Tabs & Sections
-    const tabs = document.querySelectorAll('.md-tab');
-    const promptSection = document.getElementById('prompt-section');
     const sliderSection = document.getElementById('slider-section');
     const sliderCardsContainer = document.getElementById('slider-cards');
     const noSlidersMsg = document.getElementById('no-sliders');
     const gyroPermBtn = document.getElementById('gyro-perm-btn');
-    
+
     // ── Session ──────────────────────────
     function escapeHtml(str) {
       const div = document.createElement('div');
       div.textContent = str;
       return div.innerHTML;
     }
-
     let sessionId = localStorage.getItem('vcp-session');
     if (!sessionId) {
-      sessionId = crypto.randomUUID();
+      // crypto.randomUUID() requires Secure Context (HTTPS/localhost).
+      // Fall back for plain HTTP on LAN (e.g. http://10.x.x.x:3000).
+      if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+        sessionId = crypto.randomUUID();
+      } else {
+        sessionId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = Math.random() * 16 | 0;
+          return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+      }
       localStorage.setItem('vcp-session', sessionId);
     }
 
@@ -580,11 +507,7 @@
     let activeSliders = [];
     let currentControlId = null;
     let gyroEnabled = false;
-    let gyroForce = 0;
-    
-    // Throttle control updates
     let lastControlSent = 0;
-    const CONTROL_THROTTLE_MS = 100;
 
     function connectWS() {
       const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -635,11 +558,10 @@
       switch (msg.type) {
         case 'init':
           queueNum.textContent = msg.queueSize || 0;
-          if (msg.sliders) updateSliders(msg.sliders);
-          break;
-
-        case 'available_sliders':
-          updateSliders(msg.sliders);
+          if (msg.sliders && msg.sliders.length > 0) {
+            activeSliders = msg.sliders;
+            updateSliders();
+          }
           break;
 
         case 'queued':
@@ -667,6 +589,15 @@
           queueNum.textContent = msg.queueSize || 0;
           break;
 
+        case 'error':
+          showSnackbar(msg.message, true);
+          break;
+
+        case 'available_sliders':
+          activeSliders = msg.sliders || [];
+          updateSliders();
+          break;
+
         case 'slider_value_update':
           updateSliderValue(msg.id, msg.value);
           break;
@@ -674,272 +605,7 @@
         case 'force_info':
           updateForceInfo(msg.sliders);
           break;
-
-        case 'error':
-          showSnackbar(msg.message, true);
-          break;
       }
-    }
-    
-    // ── Tab Switching ────────────────────
-    function activateTab(tab) {
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      
-      const mode = tab.dataset.tab;
-      if (mode === 'prompt') {
-        promptSection.style.display = 'block';
-        sliderSection.style.display = 'none';
-        stopControl();
-      } else {
-        promptSection.style.display = 'none';
-        sliderSection.style.display = 'flex';
-        checkGyroPermission();
-        if (activeSliders.length > 0 && !currentControlId) {
-           focusSlider(activeSliders[0].id);
-        }
-      }
-    }
-    
-    tabs.forEach(tab => {
-      tab.addEventListener('click', (e) => {
-        e.preventDefault();
-        activateTab(tab);
-      });
-      tab.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        activateTab(tab);
-      });
-    });
-
-    // ── Slider Control Logic ─────────────
-    function updateSliders(sliders) {
-      activeSliders = sliders || [];
-      sliderCardsContainer.innerHTML = '';
-      
-      if (activeSliders.length === 0) {
-        noSlidersMsg.style.display = 'block';
-        return;
-      }
-      noSlidersMsg.style.display = 'none';
-      
-      activeSliders.forEach((s, idx) => {
-        const card = document.createElement('div');
-        card.className = 'slider-card';
-        card.dataset.id = s.id;
-        
-        card.innerHTML = `
-          <div class="slider-name">${escapeHtml(s.name)}</div>
-          <div class="slider-value-display">${parseFloat(s.value).toFixed(2)}</div>
-          
-          <div class="force-visualizer">
-            <div class="force-center-mark"></div>
-            <div class="force-bar" style="width: 0%; left: 50%;"></div>
-          </div>
-          
-          <div class="touch-control-area">
-             <div class="touch-control-thumb" style="left: calc(50% - 24px);"></div>
-          </div>
-          
-          <div class="control-hint">
-            <span class="material-symbols-rounded gyro-icon">screen_rotation</span>
-            <span>左右倾斜手机来控制</span>
-          </div>
-        `;
-        
-        sliderCardsContainer.appendChild(card);
-        
-        // Touch fallback logic
-        const touchArea = card.querySelector('.touch-control-area');
-        const thumb = card.querySelector('.touch-control-thumb');
-        let startX = 0;
-        
-        touchArea.addEventListener('touchstart', (e) => {
-          startX = e.touches[0].clientX;
-          currentControlId = s.id;
-          highlightCard(s.id);
-          e.preventDefault();
-        });
-        
-        touchArea.addEventListener('touchmove', (e) => {
-           if (currentControlId !== s.id) return;
-           const x = e.touches[0].clientX;
-           const rect = touchArea.getBoundingClientRect();
-           const center = rect.width / 2;
-           const offsetX = x - rect.left - center;
-           
-           // Normalize -1 to 1 based on half width
-           let force = offsetX / (rect.width / 2);
-           force = Math.max(-1, Math.min(1, force));
-           
-           // Update Visuals
-           updateForceVisuals(card, force);
-           
-           // Send
-           sendControlForce(force);
-           e.preventDefault();
-        });
-        
-        touchArea.addEventListener('touchend', () => {
-           updateForceVisuals(card, 0);
-           sendControlForce(0);
-           // Don't clear currentControlId immediately to allow gyro to take over
-        });
-      });
-      
-      // Setup Scroll Observer to detect active card
-      setupScrollObserver();
-    }
-
-    function updateSliderValue(id, value) {
-      const card = document.querySelector(`.slider-card[data-id="${CSS.escape(id)}"]`);
-      if (!card) return;
-      const display = card.querySelector('.slider-value-display');
-      if (display) display.textContent = parseFloat(value).toFixed(2);
-    }
-
-    function updateForceInfo(sliders) {
-      if (!sliders) return;
-      for (const s of sliders) {
-        const card = document.querySelector(`.slider-card[data-id="${CSS.escape(s.id)}"]`);
-        if (!card) continue;
-        // Update force visualizer bar
-        updateForceVisuals(card, s.netForce || 0);
-        // Update participant count in hint
-        const hint = card.querySelector('.control-hint span:last-child');
-        if (hint && s.participants > 0) {
-          hint.textContent = `${s.participants} 人参与中`;
-        } else if (hint) {
-          hint.textContent = '左右倾斜手机来控制';
-        }
-      }
-    }
-
-    function setupScrollObserver() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const id = entry.target.dataset.id;
-            focusSlider(id);
-          }
-        });
-      }, { root: sliderCardsContainer, threshold: 0.6 });
-      
-      document.querySelectorAll('.slider-card').forEach(c => observer.observe(c));
-    }
-    
-    function focusSlider(id) {
-      currentControlId = id;
-      highlightCard(id);
-    }
-    
-    function highlightCard(id) {
-      document.querySelectorAll('.slider-card').forEach(c => {
-         c.classList.toggle('active-control', c.dataset.id === id);
-      });
-    }
-    
-    function updateForceVisuals(card, force) {
-       const bar = card.querySelector('.force-bar');
-       const thumb = card.querySelector('.touch-control-thumb');
-       
-       // Force is -1 to 1
-       const width = Math.abs(force) * 50; // 0 to 50%
-       const left = force < 0 ? (50 - width) : 50;
-       
-       bar.style.width = `${width}%`;
-       bar.style.left = `${left}%`;
-       
-       // Move thumb
-       // Container width approx 100% - padding?
-       // Just visual approximation for thumb
-       if (thumb) {
-           const offset = force * 40; // +/- 40px
-           thumb.style.transform = `translateX(${offset}px)`;
-       }
-       
-       // Haptics on threshold
-       if (Math.abs(force) > 0.9 && navigator.vibrate) {
-          // navigator.vibrate(5); // subtle tick
-       }
-    }
-
-    // ── Gyroscope Control ────────────────
-    function checkGyroPermission() {
-      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        gyroPermBtn.style.display = 'inline-flex';
-        gyroPermBtn.onclick = () => {
-          DeviceOrientationEvent.requestPermission()
-            .then(response => {
-              if (response == 'granted') {
-                enableGyro();
-                gyroPermBtn.style.display = 'none';
-              }
-            })
-            .catch(console.error);
-        };
-      } else {
-        enableGyro(); // Android or older iOS
-      }
-    }
-    
-    function enableGyro() {
-      if (gyroEnabled) return;
-      gyroEnabled = true;
-      window.addEventListener('deviceorientation', handleOrientation);
-    }
-    
-    function handleOrientation(event) {
-      if (!currentControlId || sliderSection.style.display === 'none') return;
-      
-      // Gamma is left/right tilt (-90 to 90)
-      // We want range approx -45 to 45 mapping to -1 to 1
-      let gamma = event.gamma;
-      
-      // Fix for some devices flipping range
-      if (gamma > 90) gamma = 90;
-      if (gamma < -90) gamma = -90;
-      
-      // Deadzone +/- 5
-      if (Math.abs(gamma) < 5) gamma = 0;
-      else gamma = gamma - (Math.sign(gamma) * 5);
-      
-      // Scale: 30 degrees = full force
-      let force = gamma / 30;
-      force = Math.max(-1, Math.min(1, force));
-      
-      // Only update if no touch interaction active?
-      // Assuming touch overrides gyro.
-      // We can update visuals on the active card
-      const card = document.querySelector(`.slider-card[data-id="${currentControlId}"]`);
-      if (card) {
-         updateForceVisuals(card, force);
-         sendControlForce(force);
-      }
-    }
-    
-    function sendControlForce(force) {
-      const now = Date.now();
-      if (now - lastControlSent < CONTROL_THROTTLE_MS && force !== 0) return;
-      
-      if (ws && ws.readyState === WebSocket.OPEN && currentControlId) {
-        ws.send(JSON.stringify({
-           type: 'control_slider',
-           id: currentControlId,
-           force: parseFloat(force.toFixed(3))
-        }));
-        lastControlSent = now;
-      }
-    }
-    
-    function stopControl() {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-         ws.send(JSON.stringify({
-            type: 'stop_control',
-            all: true
-         }));
-      }
-      currentControlId = null;
     }
 
     // ── Submit ───────────────────────────
@@ -975,25 +641,216 @@
     });
 
     // ── Suggestion chips ─────────────────
-    function applyPrompt(text) {
-      input.value = text;
-      charCount.textContent = input.value.length;
-      input.focus();
-      if (input.setSelectionRange) {
-        const end = input.value.length;
-        input.setSelectionRange(end, end);
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        input.value = chip.dataset.prompt;
+        charCount.textContent = input.value.length;
+        input.focus();
+      });
+    });
+
+    // ── Slider Control ────────────────────
+    function updateSliders() {
+      sliderCardsContainer.innerHTML = '';
+      if (!activeSliders.length) {
+        sliderSection.classList.remove('has-sliders');
+        noSlidersMsg.style.display = 'block';
+        return;
+      }
+      sliderSection.classList.add('has-sliders');
+      noSlidersMsg.style.display = 'none';
+
+      activeSliders.forEach((s) => {
+        const card = document.createElement('div');
+        card.className = 'slider-card';
+        card.dataset.id = s.id;
+
+        card.innerHTML = `
+          <div class="slider-name">${escapeHtml(s.name)}</div>
+          <div class="slider-value-display">${parseFloat(s.value).toFixed(2)}</div>
+          <div class="force-visualizer">
+            <div class="force-center-mark"></div>
+            <div class="force-bar" style="width: 0%; left: 50%;"></div>
+          </div>
+          <div class="touch-control-area">← 左右滑动控制 →</div>
+          <div class="control-hint">
+            <span class="material-symbols-rounded" style="font-size:16px">group</span>
+            <span>左右倾斜手机来控制</span>
+          </div>
+        `;
+
+        // Touch control on the touch area
+        const touchArea = card.querySelector('.touch-control-area');
+        let startX = 0;
+        touchArea.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+          currentControlId = s.id;
+          focusSlider(s.id);
+        });
+        touchArea.addEventListener('touchmove', (e) => {
+          e.preventDefault();
+          const dx = e.touches[0].clientX - startX;
+          const force = Math.max(-1, Math.min(1, dx / 100));
+          updateForceVisuals(card, force);
+          sendControlForce(force);
+        });
+        touchArea.addEventListener('touchend', () => {
+          updateForceVisuals(card, 0);
+          sendControlForce(0);
+        });
+
+        // Mouse drag control (for desktop)
+        let mouseDown = false;
+        touchArea.addEventListener('mousedown', (e) => {
+          mouseDown = true;
+          startX = e.clientX;
+          currentControlId = s.id;
+          focusSlider(s.id);
+        });
+        window.addEventListener('mousemove', (e) => {
+          if (!mouseDown || currentControlId !== s.id) return;
+          const dx = e.clientX - startX;
+          const force = Math.max(-1, Math.min(1, dx / 100));
+          updateForceVisuals(card, force);
+          sendControlForce(force);
+        });
+        window.addEventListener('mouseup', () => {
+          if (!mouseDown || currentControlId !== s.id) return;
+          mouseDown = false;
+          updateForceVisuals(card, 0);
+          sendControlForce(0);
+        });
+
+        sliderCardsContainer.appendChild(card);
+      });
+
+      setupScrollObserver();
+      checkGyroPermission();
+      if (activeSliders.length > 0 && !currentControlId) {
+        focusSlider(activeSliders[0].id);
       }
     }
-    
-    chips.forEach(chip => {
-      chip.addEventListener('click', (e) => {
-        e.preventDefault();
-        applyPrompt(chip.dataset.prompt);
+
+    function updateSliderValue(id, value) {
+      // Update in-memory state so re-renders (from available_sliders) don't reset to stale values
+      const slider = activeSliders.find(s => s.id === id);
+      if (slider) slider.value = value;
+
+      const card = document.querySelector(`.slider-card[data-id="${CSS.escape(id)}"]`);
+      if (!card) return;
+      const display = card.querySelector('.slider-value-display');
+      if (display) display.textContent = parseFloat(value).toFixed(2);
+    }
+
+    function updateForceInfo(sliders) {
+      if (!sliders) return;
+      for (const s of sliders) {
+        const card = document.querySelector(`.slider-card[data-id="${CSS.escape(s.id)}"]`);
+        if (!card) continue;
+        updateForceVisuals(card, s.netForce || 0);
+        const hint = card.querySelector('.control-hint span:last-child');
+        if (hint && s.participants > 0) {
+          hint.textContent = `${s.participants} 人参与中`;
+        } else if (hint) {
+          hint.textContent = '左右倾斜手机来控制';
+        }
+      }
+    }
+
+    function updateForceVisuals(card, force) {
+      const bar = card.querySelector('.force-bar');
+      if (!bar) return;
+      const pct = Math.abs(force) * 50;
+      if (force >= 0) {
+        bar.style.left = '50%';
+        bar.style.width = pct + '%';
+      } else {
+        bar.style.left = (50 - pct) + '%';
+        bar.style.width = pct + '%';
+      }
+    }
+
+    function focusSlider(id) {
+      currentControlId = id;
+      document.querySelectorAll('.slider-card').forEach(c => {
+        c.classList.toggle('active-control', c.dataset.id === id);
       });
-      chip.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        applyPrompt(chip.dataset.prompt);
-      });
+    }
+
+    function setupScrollObserver() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            focusSlider(entry.target.dataset.id);
+          }
+        });
+      }, { root: sliderCardsContainer, threshold: 0.6 });
+      document.querySelectorAll('.slider-card').forEach(c => observer.observe(c));
+    }
+
+    function sendControlForce(force) {
+      const now = Date.now();
+      if (ws && ws.readyState === WebSocket.OPEN && currentControlId && now - lastControlSent > 50) {
+        ws.send(JSON.stringify({
+          type: 'control_slider',
+          id: currentControlId,
+          force: parseFloat(force.toFixed(3))
+        }));
+        lastControlSent = now;
+      }
+    }
+
+    function stopControl() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'stop_control', all: true }));
+      }
+      currentControlId = null;
+    }
+
+    // ── Gyro Control ──────────────────────
+    function checkGyroPermission() {
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        gyroPermBtn.style.display = 'inline-flex';
+        gyroPermBtn.onclick = () => {
+          DeviceOrientationEvent.requestPermission()
+            .then(response => {
+              if (response === 'granted') {
+                enableGyro();
+                gyroPermBtn.style.display = 'none';
+              }
+            })
+            .catch(console.error);
+        };
+      } else {
+        enableGyro();
+      }
+    }
+
+    function enableGyro() {
+      if (gyroEnabled) return;
+      gyroEnabled = true;
+      window.addEventListener('deviceorientation', handleOrientation);
+    }
+
+    function handleOrientation(event) {
+      if (!currentControlId) return;
+      let gamma = event.gamma;
+      if (gamma > 90) gamma = 90;
+      if (gamma < -90) gamma = -90;
+      if (Math.abs(gamma) < 5) gamma = 0;
+      else gamma = gamma - (Math.sign(gamma) * 5);
+      let force = gamma / 30;
+      force = Math.max(-1, Math.min(1, force));
+      const card = document.querySelector(`.slider-card[data-id="${CSS.escape(currentControlId)}"]`);
+      if (card) {
+        updateForceVisuals(card, force);
+        sendControlForce(force);
+      }
+    }
+
+    // Stop control when page hidden
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopControl();
     });
 
     // ── Snackbar (M3) ────────────────────
