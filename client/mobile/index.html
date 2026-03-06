@@ -705,7 +705,13 @@
           if (!isActive) return;
           isActive = false;
           updateForceVisuals(card, 0);
-          sendControlForce(0);
+          // Send stop_control immediately without throttling
+          if (ws && ws.readyState === WebSocket.OPEN && currentControlId === s.id) {
+            ws.send(JSON.stringify({
+              type: 'stop_control',
+              id: s.id
+            }));
+          }
         };
 
         touchArea.addEventListener('touchstart', handleTouchStart);
@@ -737,7 +743,13 @@
             if (activeCard) {
               updateForceVisuals(activeCard, 0);
             }
-            sendControlForce(0);
+            // Send stop_control immediately without throttling
+            if (ws && ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({
+                type: 'stop_control',
+                id: s.id
+              }));
+            }
           }
           mouseDown = false;
         };
@@ -901,6 +913,8 @@
       stopControl();
     }
 
+    let lastGyroForce = 0; // Track last gyro force to detect zero crossings
+
     function handleOrientation(event) {
       if (!currentControlId) return;
       let gamma = event.gamma;
@@ -913,7 +927,21 @@
       const card = document.querySelector(`.slider-card[data-id="${CSS.escape(currentControlId)}"]`);
       if (card) {
         updateForceVisuals(card, force);
-        sendControlForce(force);
+
+        // If force is zero and we had a non-zero force before, send stop_control
+        if (Math.abs(force) < 0.01 && Math.abs(lastGyroForce) >= 0.01) {
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+              type: 'stop_control',
+              id: currentControlId
+            }));
+          }
+        } else if (Math.abs(force) >= 0.01) {
+          // Only send non-zero forces through the throttled function
+          sendControlForce(force);
+        }
+
+        lastGyroForce = force;
       }
     }
 
