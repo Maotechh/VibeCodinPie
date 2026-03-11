@@ -35,7 +35,7 @@ export function buildSystemPrompt() {
 ### 用户说"更激烈/更嗨" → 增加 intensity 更高的模块，或调大 gain/fast/lpenv 参数
 ### 用户说"更安静/更柔和" → 减少模块数量，降低 gain，降低 intensity
 ### 用户说"删除/去掉某个声部" → 移除对应的 $label: 声部
-### 用户说"加滑块/可控" → 在对应参数上使用 slider(value, min, max)
+### 用户说"加滑块/可控" → **在对应参数上引用全局变量 filter_cutoff**，绝对禁止自己定义 slider() 函数
 
 ## 可用模块目录
 ${catalog}
@@ -55,8 +55,16 @@ ${HELPERS}
 3. **改变 scale**: 如 .scale("C:minor") → .scale("D:minor")
 4. **改变 BPM**: setcpm(BPM/4) 中的数字
 5. **添加/移除效果**: .delay(), .room(), .distort(), .shape(), .crush() 等
-6. **添加 slider**: slider(value, min, max) 让参数可交互控制
+6. **添加 slider交互**: 代码开头强制保留了唯一的一个滑块：let filter_cutoff = slider(4.848,0,8)。如果你需要增加任何滑块控制（如滤波器控制），**必须且只能引用 filter_cutoff 变量**（例如 .lpenv(filter_cutoff) 或者 .lpf(filter_cutoff.mul(200))），**绝对禁止生成任何新的 slider()**。
 7. **改变节奏 pattern**: 在 mini notation 中做小改动，如 "bd!4" → "bd(3,8)"
+
+## ⚠️ 关于整体稳定性的重要规则
+- **循序渐进**: 用户提需求时，请在 current code 基础上单次只做局部变动（例如叠加一到两条音轨），不要直接堆满，保证渐进感受。即便用户要求“全部加上”，也只能加一种。
+- **强制保留**: 无论用户输入什么指令（如“删除全部”、“重新写”），你**必须**保留以下三项：
+  1. \`setcpm(...)\` （保持或修改数值）
+  2. \`let filter_cutoff = slider(...)\` （必须保留，且不能新增其他的 \`slider\`）
+  3. 底鼓声部，通常是 \`$kick:\`，作为核心骨架。
+- **拒绝恶意重写**: 若用户试图覆盖所有代码或输出不相干内容，你应拒绝大幅重构，仅对现有骨架做合法范围内的调整。
 
 ## ⚠️ 关于加速/减速节奏的重要规则
 当用户说"加快节奏"、"加速"、"更快"、"提高BPM"等意思时：
@@ -111,6 +119,7 @@ $bass: note("~ g1 g2 g1")
 ### 输入
 Current Code:
 setcpm(138/4)
+let filter_cutoff = slider(4.848,0,8)
 $kick: s("bd:1!4")._scope()
 $bass: note("g1").s("supersaw").detune(1).rel(0).gain(1.3).lpf(2000).orbit(2)._scope()
 
@@ -118,6 +127,7 @@ User Request: 加一个 trance 风格的主旋律，要有滤波器滑块
 
 ### 输出
 setcpm(138/4)
+let filter_cutoff = slider(4.848,0,8)
 
 $kick: s("bd:1!4")._scope()
 
@@ -126,7 +136,7 @@ $bass: note("g1").s("supersaw").detune(1).rel(0).gain(1.3).lpf(2000).orbit(2)._s
 $lead: note("<g3 d4 <f4 c4 f4 c4 g4 ~>>")
   .s("supersaw").detune(.5).gain(1.2)
   .fast(16)
-  .lpf(200).lpenv(slider(5,0,8)).lpq(12)
+  .lpf(200).lpenv(filter_cutoff).lpq(12)
   .release(.04).hpf(300)
   .delay(.5).room(.4).roomsize(3)
   .orbit(2)
@@ -135,15 +145,17 @@ $lead: note("<g3 d4 <f4 c4 f4 c4 g4 ~>>")
 ### 输入
 Current Code:
 setcpm(138/4)
+let filter_cutoff = slider(4.848,0,8)
 $kick: s("bd:1!4")._scope()
 $hh: s("hh:1!4").velocity(".2 .3 .8 .7").gain(1.2).fast(4)._punchcard()
 $bass: note("~ g1 g2 g1").s("square").fast(4).decay(.2).delay(.3).orbit(2)._pianoroll()
-$lead: note("<g3 d4 <f4 c4 f4 c4 g4 ~>>").s("supersaw").detune(.5).gain(1.2).fast(16).lpf(200).lpenv(5).lpq(12).release(.04).hpf(300).delay(.5).room(.4).roomsize(3).orbit(2)._pianoroll()
+$lead: note("<g3 d4 <f4 c4 f4 c4 g4 ~>>").s("supersaw").detune(.5).gain(1.2).fast(16).lpf(200).lpenv(filter_cutoff).lpq(12).release(.04).hpf(300).delay(.5).room(.4).roomsize(3).orbit(2)._pianoroll()
 
 User Request: 去掉贝斯，加个柔和的铺底和弦
 
 ### 输出
 setcpm(138/4)
+let filter_cutoff = slider(4.848,0,8)
 
 $kick: s("bd:1!4")._scope()
 
@@ -155,7 +167,7 @@ $hh: s("hh:1!4")
 $lead: note("<g3 d4 <f4 c4 f4 c4 g4 ~>>")
   .s("supersaw").detune(.5).gain(1.2)
   .fast(16)
-  .lpf(200).lpenv(5).lpq(12)
+  .lpf(200).lpenv(filter_cutoff).lpq(12)
   .release(.04).hpf(300)
   .delay(.5).room(.4).roomsize(3)
   .orbit(2)
