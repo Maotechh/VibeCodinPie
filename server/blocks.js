@@ -55,7 +55,7 @@ export const BLOCKS = {
     category: 'hihat',
     intensity: 1,
     tags: ['house', 'trance'],
-    code: `$hh: s("hh:1!4")
+    code: `$chh: s("hh:1!4")
   .velocity(".2 .3 .8 .7")
   .gain(1.2).fast(4)
 ._punchcard()`,
@@ -83,7 +83,7 @@ export const BLOCKS = {
     category: 'hihat',
     intensity: 1,
     tags: ['house', 'trance'],
-    code: `$oh: s("oh:2!4")
+    code: `$ohh: s("oh:2!4")
   .velocity("0 0 1 0")
   .fast(4).decay(.3).gain(1.2)
 ._punchcard()`,
@@ -128,7 +128,7 @@ export const BLOCKS = {
     category: 'bass',
     intensity: 1,
     tags: ['trance', 'house'],
-    code: `$bass: note("g1")
+    code: `$subpad: note("g1")
   .s("supersaw").detune(1)
   .rel(0).gain(1.3).lpf(2000)
   .orbit(2)

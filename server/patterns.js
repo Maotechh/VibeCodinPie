@@ -16,14 +16,14 @@ $kick: s("bd:1!4")
 ._scope()`,
   },
   {
-    name: 'User Test Music (Full)',
+    name: 'Full Demo',
     description: 'Strudel Official Demo (Replication)',
     code: `setcpm(138/4)
 
 let filter_cutoff = slider(4.848,0,8)
 
 $kick: s("bd:1!4")
-  .duck("2:3:4").duckattack(.2).duckdepth(.8)
+  .duck("2").duckattack(.2).duckdepth(.8)
 ._scope()
 
 $chh: s("hh:1!4")
